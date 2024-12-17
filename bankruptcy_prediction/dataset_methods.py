@@ -1,12 +1,18 @@
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import logging
-import os
 
 def load_data(file_path: str) -> pd.DataFrame:
     return pd.read_csv(file_path)
 
+def save_data(df: pd.DataFrame, file_path: str) -> None:
+    df.to_csv(file_path, index=False)
+
+def label_data(df: pd.DataFrame) -> pd.DataFrame:
+    df_labeled = df.copy()
+    labels = ["Bankrupt"] + [f"X{i}" for i in range(1, 96)]
+    df_labeled.columns = labels
+    return df_labeled
 
 def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     len_before = len(df)
@@ -44,3 +50,30 @@ def extract_significant_correlations(df: pd.DataFrame, threshold:float) -> pd.Da
     correlation_list.columns = ['Variable 1', 'Variable 2', 'Correlation']
     return correlation_list
 
+def remove_outliers(df: pd.DataFrame, columns: list) -> pd.DataFrame:
+    """
+    Removes outliers from the specified columns of a DataFrame using the IQR method.
+
+    Args:
+        df (pd.DataFrame): The input DataFrame.
+        columns (list): List of column names to check for outliers.
+
+    Returns:
+        pd.DataFrame: A DataFrame with rows containing outliers in the specified columns removed.
+    """
+    df_cleaned = df.copy()
+    print(df_cleaned.columns)
+    for column in columns:
+        # Calculate Q1, Q3, and IQR for the column
+        Q1 = df_cleaned[column].quantile(0.25)
+        Q3 = df_cleaned[column].quantile(0.75)
+        IQR = Q3 - Q1
+
+        # Define bounds for outliers
+        lower_bound = Q1 - 1.5 * IQR
+        upper_bound = Q3 + 1.5 * IQR
+
+        # Remove rows with outliers in the current column
+        df_cleaned = df_cleaned[(df_cleaned[column] >= lower_bound) & (df_cleaned[column] <= upper_bound)]
+
+    return df_cleaned
