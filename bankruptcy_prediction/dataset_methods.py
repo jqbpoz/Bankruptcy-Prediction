@@ -2,6 +2,9 @@ import pandas as pd
 import numpy as np
 import logging
 
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
+
+
 def load_data(file_path: str) -> pd.DataFrame:
     return pd.read_csv(file_path)
 
@@ -77,3 +80,14 @@ def remove_outliers(df: pd.DataFrame, columns: list) -> pd.DataFrame:
         df_cleaned = df_cleaned[(df_cleaned[column] >= lower_bound) & (df_cleaned[column] <= upper_bound)]
 
     return df_cleaned
+
+def normalize(df: pd.DataFrame, target_columns: list) -> pd.DataFrame:
+    features = df.drop(columns=target_columns)
+    targets = df[target_columns]
+
+    scaler = StandardScaler()
+    features_scaled = pd.DataFrame(scaler.fit_transform(features), columns=features.columns)
+
+    df_scaled = pd.concat([features_scaled, targets.reset_index(drop=True)], axis=1)
+    return df_scaled
+
