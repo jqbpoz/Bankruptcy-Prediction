@@ -1,10 +1,10 @@
 # Hyperparameter grids for various models
 
 LIGHTGBM_GRID = {
-    "n_estimators": [50, 100, 200],
-    "learning_rate": [0.01, 0.1, 0.2],
-    "max_depth": [3, 5, 10],
-    "num_leaves": [15, 31, 63],
+    "n_estimators": [100, 200, 300],
+    "learning_rate": [0.01, 0.05, 0.1],
+    "max_depth": [3, 5, 7],
+    "num_leaves": [15, 31, 45],
     "subsample": [0.6, 0.8, 1.0]
 }
 
